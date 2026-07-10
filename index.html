@@ -510,13 +510,20 @@
             .day-schedule {
                 display: block !important;
                 position: static !important;
-                page-break-after: always;
-                break-after: page;
+                margin: 0 !important;
             }
 
-            .day-schedule:last-of-type {
-                page-break-after: auto;
-                break-after: auto;
+            /* break-before (en vez de break-after) evita el bug de Chrome que
+               a veces inserta una página en blanco extra cuando el contenido
+               de la sección anterior termina justo en el borde de la página */
+            .day-schedule:not(:first-of-type) {
+                page-break-before: always;
+                break-before: page;
+            }
+
+            .day-schedule:first-of-type {
+                page-break-before: auto;
+                break-before: auto;
             }
 
             .print-day-title {
