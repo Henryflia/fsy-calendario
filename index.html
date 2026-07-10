@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manual de Líderes PFJ - Horario</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -204,6 +202,10 @@
 
         .day-schedule.active {
             display: block;
+        }
+
+        .print-day-title {
+            display: none;
         }
 
         @keyframes fadeInUp {
@@ -441,262 +443,144 @@
             }
         }
 
-        /* Map Modal Styles */
-        .map-button {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--turquoise) 100%);
-            color: white;
-            border: none;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 999;
-        }
-
-        .map-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 24px rgba(43, 122, 184, 0.4);
-        }
-
-        .map-button:active {
-            transform: scale(0.95);
-        }
-
-        .map-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 16px;
-        }
-
-        .map-modal.show {
-            display: flex;
-        }
-
-        .map-modal-content {
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(60px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .map-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
-            color: white;
-            border-radius: 16px 16px 0 0;
-            border-bottom: 3px solid var(--golden);
-        }
-
-        .map-modal-title {
-            font-size: calc(18px * var(--font-size-mult));
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .map-close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-
-        .map-close-btn:hover {
-            background: white;
-            color: var(--primary-dark);
-            transform: rotate(90deg);
-        }
-
-        .map-modal-body {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #mapContainer {
-            width: 100%;
-            height: 400px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            border: 2px solid var(--border);
-            background: #f0f0f0;
-        }
-
-        .map-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            border: 2px solid var(--border);
-        }
-
-        .location-info-box {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: calc(13px * var(--font-size-mult));
-            line-height: 1.6;
-        }
-
-        .location-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .status-icon {
-            font-size: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .location-coords {
-            font-size: calc(11px * var(--font-size-mult));
-            opacity: 0.9;
-            font-family: 'Courier New', monospace;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .distance-info {
-            background: linear-gradient(135deg, var(--golden) 0%, #E8954C 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: calc(14px * var(--font-size-mult));
-            margin-bottom: 12px;
-        }
-
-        .get-location-btn {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--turquoise) 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 24px;
-            font-size: calc(13px * var(--font-size-mult));
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .get-location-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .get-location-btn:active {
-            transform: scale(0.98);
-        }
-
-        .get-location-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .map-info {
-            font-size: calc(13px * var(--font-size-mult));
-            color: var(--text-secondary);
-            padding: 16px;
-            background: linear-gradient(135deg, var(--background) 0%, var(--light-gray) 100%);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-light);
-        }
-
-        @media (max-width: 480px) {
-            .map-button {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-                bottom: 16px;
-                right: 16px;
-            }
-
-            .map-modal-content {
-                max-height: 90vh;
-            }
-
-            .map-modal-header {
-                padding: 16px;
-            }
-
-            .map-modal-title {
-                font-size: calc(16px * var(--font-size-mult));
-            }
-
-            .map-close-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 20px;
-            }
-
-            .map-modal-body {
-                padding: 16px;
-            }
-        }
-
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation: none !important;
                 transition: none !important;
+            }
+        }
+
+        /* ============ IMPRESIÓN ============ */
+        @media print {
+            html, body {
+                height: auto !important;
+                min-height: auto !important;
+            }
+
+            .content {
+                min-height: auto !important;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            /* Ocultar elementos que no aplican en papel */
+            .font-controls,
+            .tabs-wrapper,
+            .toggle-description {
+                display: none !important;
+            }
+
+            header {
+                background: white !important;
+                color: black !important;
+                padding: 10px 0;
+                box-shadow: none !important;
+            }
+
+            header::before {
+                display: none !important;
+            }
+
+            .header-text h1,
+            .header-text p {
+                color: black !important;
+            }
+
+            .logo-display img {
+                width: 120px;
+            }
+
+            /* Mostrar TODOS los días, uno tras otro, no solo el activo */
+            .day-schedule {
+                display: block !important;
+                page-break-after: always;
+                break-after: page;
+            }
+
+            .day-schedule:last-child {
+                page-break-after: auto;
+                break-after: auto;
+            }
+
+            .day-schedule::before {
+                content: attr(id);
+                display: none;
+            }
+
+            .print-day-title {
+                display: block !important;
+                font-size: 20px;
+                font-weight: 700;
+                color: black !important;
+                border-bottom: 2px solid #333;
+                padding-bottom: 6px;
+                margin-bottom: 14px;
+            }
+
+            /* Título de cada día visible al imprimir */
+            .day-schedule {
+                position: relative;
+            }
+
+            .content {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .activity {
+                break-inside: avoid;
+                margin-bottom: 10px;
+            }
+
+            .activity-content {
+                box-shadow: none !important;
+                border: 1px solid #ccc;
+                border-left: 4px solid #333 !important;
+                transform: none !important;
+            }
+
+            .timeline-dot {
+                background: #333 !important;
+                border-color: #333 !important;
+                box-shadow: none !important;
+            }
+
+            .timeline-dot::after {
+                background: #999 !important;
+            }
+
+            .time-badge {
+                background: #333 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Mostrar el detalle expandido siempre al imprimir */
+            .description-text {
+                max-height: none !important;
+                opacity: 1 !important;
+                margin-top: 8px !important;
+                padding-top: 8px !important;
+                border-top: 1px solid #ccc !important;
+            }
+
+            .description-wrapper button {
+                display: none !important;
+            }
+
+            footer {
+                background: white !important;
+                color: black !important;
+                border-top: 2px solid #333;
+                margin-top: 10px;
+            }
+
+            @page {
+                margin: 1.5cm;
             }
         }
     </style>
@@ -732,6 +616,7 @@
     <main class="content">
         <!-- 📅 Día 0 -->
         <section class="day-schedule active" id="dia0">
+            <h2 class="print-day-title">📅 Día 0</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -785,6 +670,7 @@
 
         <!-- 📅 Día 1 -->
         <section class="day-schedule" id="dia1">
+            <h2 class="print-day-title">📅 Día 1</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -943,6 +829,7 @@
 
         <!-- 📅 Día 2 -->
         <section class="day-schedule" id="dia2">
+            <h2 class="print-day-title">📅 Día 2</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -1179,6 +1066,7 @@
 
         <!-- 📅 Día 3 -->
         <section class="day-schedule" id="dia3">
+            <h2 class="print-day-title">📅 Día 3</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -1394,6 +1282,7 @@
 
         <!-- 📅 Día 4 -->
         <section class="day-schedule" id="dia4">
+            <h2 class="print-day-title">📅 Día 4</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -1630,6 +1519,7 @@
 
         <!-- 📅 Día 5 -->
         <section class="day-schedule" id="dia5">
+            <h2 class="print-day-title">📅 Día 5</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content" style="border-left-color: var(--golden);">
@@ -1797,6 +1687,7 @@
 
         <!-- 📅 Día 6 -->
         <section class="day-schedule" id="dia6">
+            <h2 class="print-day-title">📅 Día 6</h2>
             <div class="activity">
                 <div class="timeline-dot"></div>
                 <div class="activity-content">
@@ -1820,53 +1711,6 @@
             </div>
         </section>
     </main>
-
-    <!-- Map Button and Modal -->
-    <button class="map-button" id="mapBtn" title="Ver mapa de la sesión">🗺️</button>
-
-    <div class="map-modal" id="mapModal">
-        <div class="map-modal-content">
-            <div class="map-modal-header">
-                <span class="map-modal-title">Mapa de la Sesión</span>
-                <button class="map-close-btn" id="closeMapBtn">✕</button>
-            </div>
-            <div class="map-modal-body">
-                <!-- Mapa Interactivo -->
-                <div id="mapContainer"></div>
-
-                <!-- Información de Ubicación -->
-                <div class="location-info-box" id="locationBox" style="display: none;">
-                    <div class="location-status">
-                        <span class="status-icon">📍</span>
-                        <span id="locationStatus">Detectando ubicación...</span>
-                    </div>
-                    <div id="coordsDisplay" class="location-coords"></div>
-                </div>
-
-                <!-- Información de Distancia -->
-                <div class="distance-info" id="distanceBox" style="display: none;">
-                    <div>Distancia al Campamento</div>
-                    <div style="font-size: calc(20px * var(--font-size-mult)); margin-top: 8px;">
-                        <span id="distanceValue">--</span> km
-                    </div>
-                </div>
-
-                <!-- Botón para obtener ubicación -->
-                <button class="get-location-btn" id="getLocationBtn">
-                    📍 Mostrar Mi Ubicación
-                </button>
-
-                <!-- Fallback: Imagen del mapa -->
-                <img src="mapa-sesion.jpg" alt="Mapa de la sesión PFJ" class="map-image" id="mapImageFallback">
-
-                <!-- Información de la sesión -->
-                <div class="map-info">
-                    📍 Actualiza el nombre y las coordenadas del lugar de tu sesión<br>
-                    <small style="opacity: 0.8;">Edita CAMP_COORDS y CAMP_NAME en el script</small>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <footer>
         <div class="footer-title">✨ Para la Fortaleza de la Juventud ✨</div>
@@ -1919,174 +1763,6 @@
             });
         });
 
-        // Map Modal
-        const mapBtn = document.getElementById('mapBtn');
-        const mapModal = document.getElementById('mapModal');
-        const closeMapBtn = document.getElementById('closeMapBtn');
-        const getLocationBtn = document.getElementById('getLocationBtn');
-        
-        let map = null;
-        let userMarker = null;
-        let campMarker = null;
-
-        // Coordenadas de la sesión (actualiza con la ubicación real)
-        const CAMP_COORDS = [19.2667, -69.6833];
-        const CAMP_NAME = "Sesión PFJ";
-
-        // Función para calcular distancia entre dos puntos (fórmula de Haversine)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radio de la Tierra en km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Inicializar mapa
-        function initMap() {
-            if (map) return;
-            
-            map = L.map('mapContainer').setView(CAMP_COORDS, 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap',
-                maxZoom: 19
-            }).addTo(map);
-
-            // Marcador del campamento
-            campMarker = L.marker(CAMP_COORDS, {
-                icon: L.icon({
-                    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjEwIiByPSI4IiBmaWxsPSIjMkI3QUI4Ii8+PHBhdGggZD0iTTE2IDEwIEwxNiAzMiBMOCAxMCBMMjQgMTAgWiIgZmlsbD0iIzJCN0FCOCI+PC9wYXRoPjwvc3ZnPg==',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 32],
-                    popupAnchor: [0, -32]
-                })
-            }).addTo(map);
-
-            campMarker.bindPopup(`<b>${CAMP_NAME}</b><br>Conferencia JAS 2026`);
-        }
-
-        // Obtener ubicación del usuario
-        function getLocation() {
-            getLocationBtn.disabled = true;
-            getLocationBtn.textContent = '⏳ Detectando ubicación...';
-
-            if (!navigator.geolocation) {
-                alert('Tu navegador no soporta geolocalización');
-                getLocationBtn.disabled = false;
-                getLocationBtn.textContent = '📍 Mostrar Mi Ubicación';
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    updateMap(latitude, longitude);
-                    getLocationBtn.textContent = '✓ Ubicación Detectada';
-                    getLocationBtn.disabled = false;
-                },
-                (error) => {
-                    console.error('Error de geolocalización:', error);
-                    let errorMsg = 'No se pudo obtener tu ubicación. ';
-                    
-                    if (error.code === 1) {
-                        errorMsg += 'Habilita permisos de ubicación en tu navegador.';
-                    } else if (error.code === 2) {
-                        errorMsg += 'Verifica tu conexión a internet.';
-                    } else {
-                        errorMsg += 'Intenta de nuevo más tarde.';
-                    }
-                    
-                    alert(errorMsg);
-                    getLocationBtn.textContent = '📍 Mostrar Mi Ubicación';
-                    getLocationBtn.disabled = false;
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        }
-
-        // Actualizar mapa con ubicación del usuario
-        function updateMap(userLat, userLon) {
-            if (!map) initMap();
-
-            // Remover marcador anterior
-            if (userMarker) map.removeLayer(userMarker);
-
-            // Agregar marcador del usuario
-            userMarker = L.marker([userLat, userLon], {
-                icon: L.icon({
-                    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiBmaWxsPSIjRjRBNDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI0IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12],
-                    popupAnchor: [0, -12]
-                })
-            }).addTo(map);
-
-            userMarker.bindPopup('<b>Tu Ubicación</b>');
-
-            // Calcular distancia
-            const distance = calculateDistance(userLat, userLon, CAMP_COORDS[0], CAMP_COORDS[1]);
-
-            // Actualizar información de ubicación
-            document.getElementById('locationBox').style.display = 'block';
-            document.getElementById('locationStatus').textContent = '✓ Ubicación detectada';
-            document.getElementById('coordsDisplay').innerHTML = 
-                `Latitud: ${userLat.toFixed(4)}°<br>Longitud: ${userLon.toFixed(4)}°`;
-
-            // Actualizar información de distancia
-            document.getElementById('distanceBox').style.display = 'block';
-            document.getElementById('distanceValue').textContent = distance.toFixed(2);
-
-            // Ajustar vista del mapa para ver ambos puntos
-            const group = new L.featureGroup([userMarker, campMarker]);
-            map.fitBounds(group.getBounds().pad(0.1), { maxZoom: 15 });
-        }
-
-        // Event listeners del modal
-        if (mapBtn && mapModal && closeMapBtn) {
-            mapBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                mapModal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-                // Inicializar mapa cuando se abre el modal
-                setTimeout(() => {
-                    if (!map) initMap();
-                    map.invalidateSize();
-                }, 100);
-            });
-
-            closeMapBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                mapModal.classList.remove('show');
-                document.body.style.overflow = '';
-            });
-
-            mapModal.addEventListener('click', (e) => {
-                if (e.target === mapModal) {
-                    mapModal.classList.remove('show');
-                    document.body.style.overflow = '';
-                }
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && mapModal.classList.contains('show')) {
-                    mapModal.classList.remove('show');
-                    document.body.style.overflow = '';
-                }
-            });
-        }
-
-        // Event listener para obtener ubicación
-        if (getLocationBtn) {
-            getLocationBtn.addEventListener('click', getLocation);
-        }
     </script>
 </body>
 </html>
