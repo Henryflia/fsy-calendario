@@ -452,13 +452,23 @@
 
         /* ============ IMPRESIÓN ============ */
         @media print {
+            * {
+                animation: none !important;
+                transition: none !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
             html, body {
                 height: auto !important;
                 min-height: auto !important;
+                overflow: visible !important;
             }
 
             .content {
                 min-height: auto !important;
+                max-width: 100%;
+                padding: 0;
             }
 
             body {
@@ -477,7 +487,6 @@
                 background: white !important;
                 color: black !important;
                 padding: 10px 0;
-                box-shadow: none !important;
             }
 
             header::before {
@@ -489,25 +498,25 @@
                 color: black !important;
             }
 
+            .logo-display {
+                min-height: auto;
+            }
+
             .logo-display img {
-                width: 120px;
+                width: 100px;
             }
 
             /* Mostrar TODOS los días, uno tras otro, no solo el activo */
             .day-schedule {
                 display: block !important;
+                position: static !important;
                 page-break-after: always;
                 break-after: page;
             }
 
-            .day-schedule:last-child {
+            .day-schedule:last-of-type {
                 page-break-after: auto;
                 break-after: auto;
-            }
-
-            .day-schedule::before {
-                content: attr(id);
-                display: none;
             }
 
             .print-day-title {
@@ -520,43 +529,38 @@
                 margin-bottom: 14px;
             }
 
-            /* Título de cada día visible al imprimir */
-            .day-schedule {
-                position: relative;
-            }
-
-            .content {
-                max-width: 100%;
-                padding: 0;
-            }
-
+            /* Simplificar layout de cada actividad para impresión */
             .activity {
+                display: block !important;
+                page-break-inside: avoid;
                 break-inside: avoid;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
+                padding-left: 14px;
+                border-left: 3px solid #333;
+            }
+
+            .timeline-dot,
+            .timeline-dot::after {
+                display: none !important;
             }
 
             .activity-content {
-                box-shadow: none !important;
-                border: 1px solid #ccc;
-                border-left: 4px solid #333 !important;
-                transform: none !important;
-            }
-
-            .timeline-dot {
-                background: #333 !important;
-                border-color: #333 !important;
-                box-shadow: none !important;
-            }
-
-            .timeline-dot::after {
-                background: #999 !important;
+                border: none;
+                padding: 4px 0 4px 8px;
             }
 
             .time-badge {
-                background: #333 !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                background: none !important;
+                color: black !important;
+                font-weight: 700;
+                padding: 0;
+                border-radius: 0;
+                box-shadow: none !important;
+            }
+
+            .activity-title {
+                display: inline;
+                margin-left: 6px;
             }
 
             /* Mostrar el detalle expandido siempre al imprimir */
