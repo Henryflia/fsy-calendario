@@ -376,6 +376,82 @@
             word-wrap: break-word;
         }
 
+        /* Manual Pages Toggle */
+        .pages-wrapper {
+            margin-top: 8px;
+        }
+
+        .toggle-pages {
+            background: linear-gradient(135deg, var(--turquoise) 0%, #2E8B9E 100%);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-size: calc(12px * var(--font-size-mult));
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(46, 139, 158, 0.3);
+            user-select: none;
+        }
+
+        .toggle-pages:active {
+            transform: scale(0.96);
+        }
+
+        .toggle-pages.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .pages-text {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .pages-text.show {
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .pages-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: calc(12px * var(--font-size-mult));
+        }
+
+        .pages-table tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pages-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .pages-table td {
+            padding: 5px 4px;
+            color: var(--text-secondary);
+        }
+
+        .pages-table td:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 55%;
+        }
+
+        .pages-table td:last-child {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -482,7 +558,8 @@
             /* Ocultar elementos que no aplican en papel */
             .font-controls,
             .tabs-wrapper,
-            .toggle-description {
+            .toggle-description,
+            .toggle-pages {
                 display: none !important;
             }
 
@@ -583,6 +660,11 @@
             }
 
             .description-wrapper button {
+                display: none !important;
+            }
+
+            /* Las páginas del manual son solo para consulta en pantalla, no se imprimen */
+            .pages-wrapper {
                 display: none !important;
             }
 
@@ -1827,6 +1909,95 @@
                 const desc = btn.nextElementSibling;
                 btn.classList.toggle('expanded');
                 desc.classList.toggle('show');
+            });
+        });
+
+        // ===== Páginas del Manual por Actividad =====
+        const ROLE_LABELS = {
+            c: 'Consejeros',
+            ca: 'Coordinadores Auxiliares',
+            co: 'Coordinadores',
+            md: 'Matrimonio Director',
+            p: 'Participante'
+        };
+        const ROLE_ORDER = ['c', 'ca', 'co', 'md', 'p'];
+
+        const MANUAL_PAGES = {"dia0": [{"t": "Sesión de grupo de coordinadores auxiliares/consejeros", "p": {"c": "19", "ca": "111"}}, {"t": "Planificación con los consejeros adjuntos", "p": {"c": "19-20, 22", "ca": "112-113"}}, {"t": "Cena", "p": {}}, {"t": "Transición", "p": {}}], "dia1": [{"t": "Reunión de coordinadores/coordinadores auxiliares", "p": {"ca": "115", "co": "148", "md": "187"}}, {"t": "Predesayuno", "p": {}}, {"t": "Transición", "p": {}}, {"t": "Desayuno del personal", "p": {}}, {"t": "Distribución de materiales, asignaciones de cantantes y práctica de bailarines", "p": {"c": "23-24", "ca": "94-95", "md": "187"}}, {"t": "Llegada de los participantes y asignación de grupos", "p": {"c": "24", "ca": "98-99, 116", "co": "149-151", "md": "187"}}, {"t": "Entregar la escritura por compañía", "p": {}}, {"t": "Almuerzo", "p": {"ca": "94"}}, {"t": "Reúnete con tu consejero", "p": {"c": "25-29", "ca": "116", "md": "187", "p": "10-11"}}, {"t": "Reúnete con tu compañía", "p": {"c": "29-31", "ca": "116", "md": "187", "p": "12-13"}}, {"t": "Nombre y pasaje de las escrituras (asignados)", "p": {"c": "31"}}, {"t": "Orientación", "p": {"c": "31", "ca": "117", "co": "151-153", "md": "187-188", "p": "14"}}, {"t": "Lección de la noche de hogar", "p": {"c": "32", "co": "154", "md": "188", "p": "15"}}, {"t": "Juegos de la noche de hogar y reunión de análisis", "p": {"c": "32-35", "ca": "117", "co": "154", "md": "188"}}, {"t": "Establecimiento de metas en la noche de hogar", "p": {"c": "35-37", "ca": "118", "co": "155", "p": "16-19"}}, {"t": "Cena", "p": {"c": "32"}}, {"t": "Recuento de personas", "p": {}}, {"t": "Revisión de las habitaciones de los participantes", "p": {"c": "25", "ca": "116", "co": "151"}}, {"t": "Tiempo para meditar y prepararse para acostarse", "p": {"c": "38"}}, {"t": "Reflexiona y repasa", "p": {"c": "38-40", "ca": "118", "co": "155", "md": "188", "p": "20-21"}}, {"t": "Tiempo libre de los participantes", "p": {"ca": "99"}}, {"t": "Apagar las luces", "p": {"c": "40", "ca": "118", "co": "155"}}], "dia2": [{"t": "Reunión de coordinadores auxiliares/consejeros", "p": {"c": "42", "ca": "120"}}, {"t": "Devocional matutino para participantes", "p": {"c": "42", "p": "24"}}, {"t": "Predesayuno", "p": {}}, {"t": "Estudio del evangelio", "p": {"c": "42-44", "ca": "120", "co": "158", "p": "25-29"}}, {"t": "Transición", "p": {}}, {"t": "Reunión del matrimonio director de sesión/maestros", "p": {"md": "190"}}, {"t": "Desayuno", "p": {"c": "42"}}, {"t": "Devocional matutino con el matrimonio director de sesión", "p": {"c": "44-45", "ca": "120", "co": "158", "md": "190", "p": "30"}}, {"t": "Clases", "p": {"c": "45", "ca": "82-83", "co": "159", "p": "31"}}, {"t": "Almuerzo", "p": {"c": "45", "ca": "94, 120", "co": "159"}}, {"t": "Ensayo del programa musical", "p": {"c": "45", "ca": "120", "co": "159"}}, {"t": "Reunión de coordinadores/coordinadores auxiliares", "p": {"ca": "121", "co": "160"}}, {"t": "Ensayo del programa musical | Audiciones para el espectáculo de variedades", "p": {"c": "45-46"}}, {"t": "Tiempo libre de los participantes", "p": {"c": "46", "ca": "99"}}, {"t": "Pautas para los bailes de FSY", "p": {"c": "48", "p": "38-39"}}, {"t": "Baile", "p": {"c": "48", "ca": "84-86", "co": "160", "md": "190"}}, {"t": "Cena", "p": {"c": "32"}}, {"t": "Recuento de personas", "p": {}}, {"t": "Tiempo para meditar y prepararse para acostarse", "p": {"c": "38"}}, {"t": "Reflexiona y repasa", "p": {"c": "38-40", "co": "160", "p": "40-41"}}, {"t": "Apagar las luces", "p": {"c": "40"}}], "dia3": [{"t": "Reunión de coordinadores auxiliares/consejeros", "p": {"c": "42", "ca": "124"}}, {"t": "Devocional matutino para participantes", "p": {"c": "50", "p": "44-45"}}, {"t": "Predesayuno", "p": {}}, {"t": "Estudio del evangelio", "p": {"c": "50", "ca": "124", "p": "46-47"}}, {"t": "Transición", "p": {}}, {"t": "Desayuno", "p": {"c": "42"}}, {"t": "Devocional matutino con el matrimonio director de sesión", "p": {"c": "44-45", "ca": "120", "co": "163", "p": "48-49"}}, {"t": "Actividad de Amar, compartir e Invitar", "p": {"p": "50"}}, {"t": "Tiempo libre de los participantes", "p": {"c": "46", "ca": "99"}}, {"t": "Almuerzo", "p": {"c": "45", "ca": "94"}}, {"t": "Ensayo del programa musical", "p": {"c": "45"}}, {"t": "Actividad: Acercarse a Cristo a través de la obra del templo", "p": {"c": "69-73", "ca": "131-132", "co": "175", "md": "197", "p": "103-109"}}, {"t": "Reunión de coordinadores/coordinadores auxiliares", "p": {"ca": "124", "co": "164", "md": "192"}}, {"t": "Preparación del estandarte y los versos cantados", "p": {"c": "47", "ca": "89", "co": "160", "p": "36"}}, {"t": "Noche de juegos y competencia de versos cantados", "p": {"c": "51-52, 90-93", "ca": "89-93, 125", "co": "164", "md": "192", "p": "54-55"}}, {"t": "Noche de comida favorita", "p": {"c": "52-53", "ca": "86-87", "co": "165", "md": "192"}}, {"t": "Recuento de personas", "p": {}}, {"t": "Tiempo para meditar y prepararse para acostarse", "p": {"c": "38"}}, {"t": "Reflexiona y repasa", "p": {"c": "38-40", "p": "56-57"}}, {"t": "Apagar las luces", "p": {"c": "40"}}], "dia4": [{"t": "Reunión de coordinadores auxiliares/consejeros", "p": {"c": "42", "ca": "127"}}, {"t": "Devocional matutino para participantes", "p": {"c": "42, 50", "p": "60"}}, {"t": "Predesayuno", "p": {}}, {"t": "Estudio del evangelio", "p": {"c": "55", "p": "62-63"}}, {"t": "Transición", "p": {}}, {"t": "Desayuno", "p": {"c": "55"}}, {"t": "Devocional matutino para los hombres jóvenes | Práctica del popurrí de FSY", "p": {"ca": "127", "co": "168", "md": "194", "p": "64-65"}}, {"t": "Actividad de mujeres jóvenes", "p": {"c": "56-59", "ca": "107-109, 127", "co": "168-169", "p": "66-77"}}, {"t": "Devocional matutino para las mujeres jóvenes | Práctica del popurrí de FSY", "p": {"ca": "127", "co": "168", "md": "194", "p": "64-65"}}, {"t": "Actividad de hombres jóvenes", "p": {"c": "56-59", "ca": "107-109, 128", "co": "168-169", "p": "66-77"}}, {"t": "Almuerzo", "p": {"c": "59", "ca": "94"}}, {"t": "Encuesta misional", "p": {}}, {"t": "Análisis sobre la reverencia y el testimonio", "p": {"c": "60", "ca": "128", "p": "80-83"}}, {"t": "Escribir el testimonio", "p": {"c": "60", "ca": "129", "p": "87"}}, {"t": "Reunión de coordinadores/coordinadores auxiliares", "p": {"co": "169", "md": "195"}}, {"t": "Ensayo general del programa musical", "p": {"co": "169"}}, {"t": "Programa musical", "p": {"ca": "95-97", "co": "169-170", "md": "195", "p": "84-85"}}, {"t": "Devocional vespertino con Autoridad General", "p": {"co": "169-170", "md": "195", "p": "86"}}, {"t": "Popurrí de FSY", "p": {"c": "226", "ca": "129, 226", "co": "226", "md": "226", "p": "137"}}, {"t": "Reuniones de testimonios", "p": {"c": "60", "ca": "103", "co": "171", "md": "195", "p": "87"}}, {"t": "Cena", "p": {"c": "60"}}, {"t": "Recuento de personas", "p": {}}, {"t": "Tiempo para meditar y prepararse para acostarse", "p": {"c": "38"}}, {"t": "Reflexiona y repasa/testimonios", "p": {"c": "38-40", "p": "88-89"}}, {"t": "Apagar las luces", "p": {"c": "40"}}], "dia5": [{"t": "Reunión de coordinadores auxiliares/consejeros", "p": {"c": "42", "ca": "131"}}, {"t": "Devocional matutino para participantes", "p": {"c": "42, 50", "p": "92"}}, {"t": "Predesayuno", "p": {}}, {"t": "Estudio del evangelio", "p": {"c": "62", "p": "94-95"}}, {"t": "Transición", "p": {}}, {"t": "Desayuno", "p": {"c": "42"}}, {"t": "Devocional matutino con el matrimonio director de sesión", "p": {"c": "44-45", "co": "174", "p": "98"}}, {"t": "Repaso del establecimiento de metas", "p": {"c": "62-64", "p": "96-97"}}, {"t": "Actividad de la guía Para la Fortaleza de la Juventud", "p": {"c": "65-68, 229-268", "ca": "87-89, 131, 229-268", "co": "174, 229-268", "md": "197, 229-268", "p": "99-102, 140-179"}}, {"t": "Almuerzo", "p": {"c": "59", "ca": "94"}}, {"t": "Ensayo general del espectáculo de variedades", "p": {}}, {"t": "Pautas para el espectáculo de variedades", "p": {"c": "59", "p": "78-79"}}, {"t": "Espectáculo de variedades", "p": {"c": "59", "ca": "104-107", "co": "169", "md": "194", "p": "78-79"}}, {"t": "Baile", "p": {"c": "48", "ca": "84-86, 132", "co": "175", "md": "197"}}, {"t": "Mensaje llévatelo a casa", "p": {"c": "73", "co": "176", "md": "197-198", "p": "110"}}, {"t": "Presentación de diapositivas", "p": {"c": "73", "ca": "102", "co": "175", "md": "197"}}, {"t": "Mensaje llévatelo a casa de la compañía", "p": {"c": "74-75", "p": "112-113"}}, {"t": "Cena", "p": {"c": "32"}}, {"t": "Recuento de personas", "p": {}}, {"t": "Tiempo para meditar y prepararse para acostarse", "p": {"c": "38"}}, {"t": "Tiempo libre/empacar", "p": {"ca": "99"}}, {"t": "Oración", "p": {"c": "75"}}, {"t": "Apagar las luces", "p": {"c": "76", "ca": "132", "co": "176"}}], "dia6": [{"t": "Desayuno", "p": {}}, {"t": "Revisión de las habitaciones/salida de los participantes", "p": {"c": "77", "ca": "134", "co": "179"}}]};
+
+        function normalizeTitle(str) {
+            return str
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        const STOPWORDS = new Set(['de','la','el','los','las','y','a','al','en','con','del','una','un','su','sus','para','por','que','se','lo','tu']);
+
+        function significantWords(norm) {
+            return norm.split(' ').filter(w => w.length >= 3 && !STOPWORDS.has(w));
+        }
+
+        function findPagesMatch(dayEntries, htmlWordSet) {
+            let best = null;
+            let bestScore = 0;
+            let bestCount = 0;
+            dayEntries.forEach(entry => {
+                const entryWords = significantWords(normalizeTitle(entry.t));
+                if (entryWords.length === 0) return;
+                const matchedCount = entryWords.filter(w => htmlWordSet.has(w)).length;
+                const denom = Math.min(entryWords.length, htmlWordSet.size) || entryWords.length;
+                const score = matchedCount / denom;
+                const threshold = denom <= 2 ? 1.0 : 0.7;
+                if (score >= threshold && (score > bestScore || (score === bestScore && matchedCount > bestCount))) {
+                    best = entry;
+                    bestScore = score;
+                    bestCount = matchedCount;
+                }
+            });
+            return best;
+        }
+
+        document.querySelectorAll('.day-schedule').forEach(section => {
+            const dayId = section.id;
+            const dayEntries = MANUAL_PAGES[dayId];
+            if (!dayEntries) return;
+
+            section.querySelectorAll('.activity').forEach(activity => {
+                const titleEl = activity.querySelector('.activity-title');
+                if (!titleEl) return;
+                const htmlWordSet = new Set(significantWords(normalizeTitle(titleEl.textContent)));
+                const match = findPagesMatch(dayEntries, htmlWordSet);
+                if (!match) return;
+
+                const rows = ROLE_ORDER
+                    .filter(role => match.p[role])
+                    .map(role => `<tr><td>${ROLE_LABELS[role]}</td><td>${match.p[role]}</td></tr>`)
+                    .join('');
+                if (!rows) return;
+
+                const content = activity.querySelector('.activity-content');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'pages-wrapper';
+                wrapper.innerHTML = `
+                    <button class="toggle-pages" type="button">
+                        <span class="toggle-icon">▼</span>
+                        <span>📖 Páginas del manual</span>
+                    </button>
+                    <div class="pages-text">
+                        <table class="pages-table">${rows}</table>
+                    </div>
+                `;
+                content.appendChild(wrapper);
+            });
+        });
+
+        document.querySelectorAll('.toggle-pages').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pagesText = btn.nextElementSibling;
+                btn.classList.toggle('expanded');
+                pagesText.classList.toggle('show');
             });
         });
 
