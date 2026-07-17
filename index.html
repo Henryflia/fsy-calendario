@@ -2172,6 +2172,20 @@
 
             markPastActivities();
             setInterval(markPastActivities, 60000); // se actualiza cada minuto
+
+            // Abrir automáticamente la pestaña del día actual (Día 0 = domingo)
+            const todayOffset = new Date().getDay(); // 0=domingo ... 6=sábado
+            const todayDayId = Object.keys(DAY_OFFSET).find(id => DAY_OFFSET[id] === todayOffset);
+            const todayTab = document.querySelector(`.tab[data-day="${todayDayId}"]`);
+            const todaySection = document.getElementById(todayDayId);
+
+            if (todayTab && todaySection) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.day-schedule').forEach(s => s.classList.remove('active'));
+                todayTab.classList.add('active');
+                todaySection.classList.add('active');
+                todayTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
         })();
 
     </script>
