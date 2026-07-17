@@ -274,6 +274,94 @@
             transform: translateY(-2px);
         }
 
+        /* Actividades que ya pasaron */
+        .activity.is-past {
+            transition: opacity 0.6s ease;
+        }
+
+        .activity.is-past .activity-content {
+            background: repeating-linear-gradient(
+                135deg,
+                #F4F6F5,
+                #F4F6F5 10px,
+                #EEF1EF 10px,
+                #EEF1EF 20px
+            );
+            border-left-color: #9BBF9E;
+            box-shadow: none;
+            opacity: 0.68;
+            position: relative;
+        }
+
+        .activity.is-past .activity-content:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .activity.is-past .activity-title {
+            color: #7C8B7E;
+            text-decoration: line-through;
+            text-decoration-color: #9BBF9E;
+            text-decoration-thickness: 2px;
+        }
+
+        .activity.is-past .time-badge {
+            background: #B7C9B9;
+            box-shadow: none;
+        }
+
+        .activity.is-past .timeline-dot {
+            background: linear-gradient(135deg, #7BC495 0%, #4FA868 100%);
+            border-color: white;
+            box-shadow: 0 0 0 4px var(--background), 0 0 8px rgba(79, 168, 104, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity.is-past .timeline-dot::before {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            line-height: 1;
+        }
+
+        .activity.is-past .timeline-dot::after {
+            background: linear-gradient(180deg, #9BBF9E 0%, var(--border) 100%);
+        }
+
+        .done-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: calc(10px * var(--font-size-mult));
+            font-weight: 700;
+            color: #4FA868;
+            background: #E4F2E6;
+            border: 1px solid #B7DABC;
+            border-radius: 10px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            margin-bottom: 8px;
+            vertical-align: middle;
+        }
+
+        @media print {
+            .activity.is-past .activity-content {
+                background: none !important;
+                opacity: 1 !important;
+            }
+            .done-badge {
+                display: none;
+            }
+        }
+
         .time-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--golden) 0%, #E8954C 100%);
@@ -2000,6 +2088,91 @@
                 pagesText.classList.toggle('show');
             });
         });
+
+        // ===== Marcar actividades pasadas en gris (Día 0 = domingo, se reinicia cada semana) =====
+        (function () {
+            const DAY_OFFSET = {
+                dia0: 0, // Domingo
+                dia1: 1, // Lunes
+                dia2: 2, // Martes
+                dia3: 3, // Miércoles
+                dia4: 4, // Jueves
+                dia5: 5, // Viernes
+                dia6: 6  // Sábado
+            };
+
+            function parseTimeToken(token, fallbackPeriod) {
+                const m = token.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+                if (!m) return null;
+                let hour = parseInt(m[1], 10);
+                const minute = parseInt(m[2], 10);
+                const period = (m[3] || fallbackPeriod || '').toUpperCase();
+                if (period === 'PM' && hour !== 12) hour += 12;
+                if (period === 'AM' && hour === 12) hour = 0;
+                return { hour, minute };
+            }
+
+            // Devuelve la hora de FIN de la actividad (o la única hora si es puntual)
+            function parseEndTime(text) {
+                const clean = text.trim();
+                if (!/\d/.test(clean)) return null; // ej. "Hora por determinar"
+
+                const parts = clean.split(/–|-/).map(p => p.trim()).filter(Boolean);
+                if (parts.length === 0) return null;
+
+                const lastToken = parts[parts.length - 1];
+                const lastMatch = lastToken.match(/(AM|PM)/i);
+                const fallbackPeriod = lastMatch ? lastMatch[1].toUpperCase() : null;
+
+                const end = parseTimeToken(lastToken, fallbackPeriod);
+                return end;
+            }
+
+            function getWeekSunday(now) {
+                const sunday = new Date(now);
+                sunday.setHours(0, 0, 0, 0);
+                sunday.setDate(sunday.getDate() - sunday.getDay());
+                return sunday;
+            }
+
+            function markPastActivities() {
+                const now = new Date();
+                const weekSunday = getWeekSunday(now);
+
+                document.querySelectorAll('.day-schedule').forEach(section => {
+                    const offset = DAY_OFFSET[section.id];
+                    if (offset === undefined) return;
+
+                    const dayDate = new Date(weekSunday);
+                    dayDate.setDate(dayDate.getDate() + offset);
+
+                    section.querySelectorAll('.activity').forEach(activity => {
+                        const badge = activity.querySelector('.time-badge');
+                        activity.classList.remove('is-past');
+                        const existingDone = activity.querySelector('.done-badge');
+                        if (existingDone) existingDone.remove();
+                        if (!badge) return;
+
+                        const end = parseEndTime(badge.textContent);
+                        if (!end) return;
+
+                        const activityDate = new Date(dayDate);
+                        activityDate.setHours(end.hour, end.minute, 0, 0);
+
+                        if (activityDate.getTime() < now.getTime()) {
+                            activity.classList.add('is-past');
+                            const doneBadge = document.createElement('span');
+                            doneBadge.className = 'done-badge';
+                            doneBadge.innerHTML = '✓ Completado';
+                            badge.insertAdjacentElement('afterend', doneBadge);
+                        }
+                    });
+                });
+            }
+
+            markPastActivities();
+            setInterval(markPastActivities, 60000); // se actualiza cada minuto
+        })();
 
     </script>
 </body>
